@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ImportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('admin.pages.dataImport.index');
+})->name('admin.dashboard');
+
+
+Route::get('/upload-document', [ImportController::class, 'uploadeDocument'])->name('uploadeDocument');
+Route::post('/import-csv', [ImportController::class, 'uploadCSV'])->name('import.csv');
