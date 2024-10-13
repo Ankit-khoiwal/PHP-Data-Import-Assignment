@@ -20,4 +20,4 @@ Route::get('/', function () {
 
 
 Route::get('/upload-document', [ImportController::class, 'uploadeDocument'])->name('uploadeDocument');
-Route::post('/import-csv', [ImportController::class, 'uploadCSV'])->name('import.csv');
+Route::post('/upload-csv', [ImportController::class, 'uploadCSV'])->name('import.csv');
