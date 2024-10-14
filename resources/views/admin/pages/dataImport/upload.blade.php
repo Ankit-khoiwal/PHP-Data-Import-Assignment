@@ -15,7 +15,7 @@
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
-        <form action="{{ route('import.csv') }}" method="POST" id="uploadForm" enctype="multipart/form-data">
+        <form action="{{ route('import.csv') }}" method="GET" id="uploadForm" enctype="multipart/form-data">
             @csrf
             <div id="dropZoon" class="upload-area__drop-zoon drop-zoon">
                 <span class="drop-zoon__icon">
@@ -484,56 +484,54 @@
             return true;
         }
 
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const uploadButton = document.querySelector('#uploadButton');
-        //     const errorMessage = document.querySelector('#errorMessage');
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadButton = document.querySelector('#uploadButton');
+            const errorMessage = document.querySelector('#errorMessage');
 
-        //     uploadButton.addEventListener('click', function(event) {
-        //         event.preventDefault();
-        //         uploadButton.disabled = true;
-        //         const file = fileInput.files[0];
+            uploadButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                uploadButton.disabled = true;
+                const file = fileInput.files[0];
 
-        //         if (!file) {
-        //             errorMessage.textContent = 'Please select a file.';
-        //             return;
-        //         }
+                if (!file) {
+                    errorMessage.textContent = 'Please select a file.';
+                    return;
+                }
 
-        //         if (file.size > 250 * 1024 * 1024) {
-        //             errorMessage.textContent = 'File size exceeds the limit of 250 MB.';
-        //             return;
-        //         }
+                if (file.size > 250 * 1024 * 1024) {
+                    errorMessage.textContent = 'File size exceeds the limit of 250 MB.';
+                    return;
+                }
 
-        //         const formData = new FormData();
-        //         formData.append('csv_file', file);
-        //         formData.append('_token', '{{ csrf_token() }}');
+                const formData = new FormData();
+                formData.append('csv_file', file);
+                formData.append('_token', '{{ csrf_token() }}');
 
-        //         fetch('{{ route('import.csv') }}', {
-        //                 method: 'POST',
-        //                 body: formData,
-        //                 headers: {
-        //                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
-        //                     'Accept': 'application/json',
-        //                 },
+                fetch('{{ route('import.csv') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        processData: false,
+                        contentType: false
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert('CSV file uploaded successfully.');
+                        uploadButton.removeAttribute('disabled');
+                    })
+                    .catch(error => {
+                        alert('An error occurred while uploading the CSV file.');
+                        console.error('There was an error with the upload:', error);
+                    });
 
-        //                 processData: false,
-        //                 contentType: false
-        //             })
-        //             .then(response => {
-        //                 if (!response.ok) {
-        //                     throw new Error('Network response was not ok');
-        //                 }
-        //                 return response.json();
-        //             })
-        //             .then(data => {
-        //                 alert('CSV file uploaded successfully.');
-        //                 uploadButton.removeAttribute('disabled');
-        //             })
-        //             .catch(error => {
-        //                 alert('An error occurred while uploading the CSV file.');
-        //                 console.error('There was an error with the upload:', error);
-        //             });
-
-        //     });
-        // });
+            });
+        });
     </script>
 @endsection

@@ -18,6 +18,11 @@ Route::get('/', function () {
     return view('admin.pages.dataImport.index');
 })->name('admin.dashboard');
 
+Route::get('/phpinfo', function () {
+    phpinfo();
+});
+
+
 
 Route::get('/upload-document', [ImportController::class, 'uploadeDocument'])->name('uploadeDocument');
-Route::post('/upload-csv', [ImportController::class, 'uploadCSV'])->name('import.csv');
+Route::any('/upload-csv', [ImportController::class, 'uploadCSVData'])->name('import.csv');

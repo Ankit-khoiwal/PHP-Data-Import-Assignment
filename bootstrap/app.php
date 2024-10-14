@@ -15,6 +15,8 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
+ini_set('max_execution_time', 600);  // 10 minutes
+
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces

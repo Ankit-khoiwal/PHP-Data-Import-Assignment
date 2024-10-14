@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\FinancialTrans;
 use App\Models\CommonFeeCollection;
-use ProcessCSV;
+use App\Jobs\ProcessCSV;
 
 class ImportController extends Controller
 {
@@ -20,20 +20,21 @@ class ImportController extends Controller
     }
 
 
-    public function uploadCSV(Request $request)
+    public function uploadCSVData(Request $request)
     {
-        dd($request->file('csv_file'));
 
-        if ($request->hasFile('csv_file') && $request->file('csv_file')->getSize() > 262144000) {
-            // return back()->withErrors(['csv_file' => 'The file size exceeds the maximum limit of 250MB.']);
-            dd('ffile size');
-        }
+        dd($request->all());
 
         $request->validate([
             'csv_file' => 'required|file|mimes:csv,txt',
         ]);
+        set_time_limit(0);
 
-        dd('File passed validation');
+        // if($request->hasFile('csv_file')) {
+        //     dd('File passed validation');
+        // } else{
+        //     dd('not file');
+        // }
 
         $path = $request->file('csv_file')->storeAs('uploads', 'import.csv');
         ProcessCSV::dispatch(storage_path('app/' . $path));
