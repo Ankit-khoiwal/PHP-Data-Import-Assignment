@@ -22,24 +22,79 @@ class ImportController extends Controller
 
     public function uploadCSVData(Request $request)
     {
-
-        dd($request->all());
-
+        // Validate the file input
         $request->validate([
             'csv_file' => 'required|file|mimes:csv,txt',
         ]);
-        set_time_limit(0);
 
-        // if($request->hasFile('csv_file')) {
-        //     dd('File passed validation');
-        // } else{
-        //     dd('not file');
-        // }
+        set_time_limit(0); // Remove the time limit for long processes
 
-        $path = $request->file('csv_file')->storeAs('uploads', 'import.csv');
-        ProcessCSV::dispatch(storage_path('app/' . $path));
+        // Store the uploaded CSV file
+        $filePath = $request->file('csv_file')->getRealPath();
 
-        return back()->with('success', 'CSV file upload started. It will be processed in the background.');
+        // Open the file for reading
+        if (($handle = fopen($filePath, 'r')) !== false) {
+
+            // Skip the header row
+            fgetcsv($handle);
+
+            $batchData = []; // Initialize an array to hold batch data
+            $batchSize = 1000; // Define the batch size
+            $rowCount = 0;
+
+            // Loop through the CSV file and read rows
+            while (($data = fgetcsv($handle)) !== false) {
+                $batchData[] = [
+                    'date' => $data[1],
+                    'academic_year' => $data[2],
+                    'session' => $data[3],
+                    'alloted_category' => $data[4],
+                    'voucher_type' => $data[5],
+                    'voucher_no' => $data[6],
+                    'roll_no' => $data[7],
+                    'admno_uniqueid' => $data[8],
+                    'status' => $data[9],
+                    'fee_category' => $data[10],
+                    'faculty' => $data[11],
+                    'program' => $data[12],
+                    'department' => $data[13],
+                    'batch' => $data[14],
+                    'receipt_no' => $data[15],
+                    'fee_head' => $data[16],
+                    'due_amount' => $data[17],
+                    'paid_amount' => $data[18],
+                    'concession_amount' => $data[19],
+                    'scholarship_amount' => $data[20],
+                    'reverse_concession_amount' => $data[21],
+                    'write_off_amount' => $data[22],
+                    'adjusted_amount' => $data[23],
+                    'refund_amount' => $data[24],
+                    'fund_transfer_amount' => $data[25],
+                    'remarks' => $data[26],
+                ];
+
+                $rowCount++;
+
+                // If the batch size is reached, insert into the database
+                if ($rowCount == $batchSize) {
+                    DB::table('temp_import')->insert($batchData);
+                    $batchData = []; // Reset the batch array
+                    $rowCount = 0;   // Reset row count
+                }
+            }
+
+            // Insert any remaining rows that didn't complete a full batch
+            if (count($batchData) > 0) {
+                DB::table('temp_import')->insert($batchData);
+            }
+
+            fclose($handle); // Close the file after reading
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'CSV data successfully imported in chunks of 1000.',
+        ]);
     }
 
 
