@@ -45,7 +45,7 @@
                     </g>
                 </svg>
             </span>
-            <span class="app-brand-text demo menu-text fw-bolder ms-2">Tasks</span>
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">Documents</span>
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -67,8 +67,8 @@
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Pages</span>
         </li>
-        <li class="menu-item {{ Route::is('admin.dashboard') ? 'active' : '' }}">
-            <a href="{{ route('admin.dashboard') }}" class="menu-link">
+        <li class="menu-item {{ Route::is('uploadeDocument') ? 'active' : '' }}">
+            <a href="{{ route('uploadeDocument') }}" class="menu-link">
                 <i class="fas fa-tasks me-2"></i>
                 <div data-i18n="Account Settings "> Data Import</div>
             </a>

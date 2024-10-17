@@ -15,7 +15,7 @@
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
-        <form action="{{ route('import.csv') }}" method="GET" id="uploadForm" enctype="multipart/form-data">
+        <form action="{{ route('import.csv') }}" method="POST" id="uploadForm" enctype="multipart/form-data">
             @csrf
             <div id="dropZoon" class="upload-area__drop-zoon drop-zoon">
                 <span class="drop-zoon__icon">
@@ -486,20 +486,42 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const uploadButton = document.querySelector('#uploadButton');
-            const errorMessage = document.querySelector('#errorMessage');
+            const fileInput = document.querySelector('#fileInput');
+            const uploadArea = document.querySelector('#uploadArea');
+            const uploadDiv = document.querySelector('#uploadDiv');
+            const uploadedFile = document.querySelector('#uploadedFile');
+            const uploadedFileName = document.querySelector('.uploaded-file__name');
+            const uploadedFileCounter = document.querySelector('.uploaded-file__counter');
+            const loadingText = document.querySelector('#loadingText');
+            const errorMessages = document.querySelector('#errorMessages');
 
-            uploadButton.addEventListener('click', function(event) {
+            fileInput.addEventListener('change', updateFileDetails);
+            uploadButton.addEventListener('click', uploadFile);
+
+            function updateFileDetails() {
+                const file = fileInput.files[0];
+                if (file) {
+                    uploadedFileName.textContent = file.name;
+                    uploadedFileCounter.textContent = '0%';
+                    uploadedFile.classList.remove('d-none');
+                    uploadButton.disabled = false;
+                }
+            }
+
+            function uploadFile(event) {
                 event.preventDefault();
                 uploadButton.disabled = true;
                 const file = fileInput.files[0];
 
                 if (!file) {
-                    errorMessage.textContent = 'Please select a file.';
+                    showMessage('Please select a file.', 'danger');
+                    uploadButton.disabled = false;
                     return;
                 }
 
                 if (file.size > 250 * 1024 * 1024) {
-                    errorMessage.textContent = 'File size exceeds the limit of 250 MB.';
+                    showMessage('File size exceeds the limit of 250 MB.', 'danger');
+                    uploadButton.disabled = false;
                     return;
                 }
 
@@ -513,25 +535,48 @@
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
-                        processData: false,
-                        contentType: false
                     })
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
+                        if (!response.ok) throw new Error('Network response was not ok');
                         return response.json();
                     })
                     .then(data => {
-                        alert('CSV file uploaded successfully.');
-                        uploadButton.removeAttribute('disabled');
+                        if (data.status === 200) {
+                            showMessage(data.message, 'success');
+                            clearForm();
+                        } else {
+                            showMessage('Data verification failed.', 'danger');
+                        }
                     })
                     .catch(error => {
-                        alert('An error occurred while uploading the CSV file.');
+                        showMessage('An error occurred while uploading the CSV file.', 'danger');
                         console.error('There was an error with the upload:', error);
+                    })
+                    .finally(() => {
+                        uploadButton.disabled = false;
                     });
+            }
 
-            });
+            function showMessage(message, type) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                alertDiv.role = 'alert';
+                alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="close btn btn-success" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true" >&times;</span>
+            </button>
+        `;
+                uploadArea.insertAdjacentElement('afterbegin', alertDiv);
+            }
+
+            function clearForm() {
+                fileInput.value = '';
+                uploadedFile.classList.add('d-none');
+                uploadedFileName.textContent = '';
+                uploadedFileCounter.textContent = '';
+                uploadButton.disabled = true;
+            }
         });
     </script>
 @endsection

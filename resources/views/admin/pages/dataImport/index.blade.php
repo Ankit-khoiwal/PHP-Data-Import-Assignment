@@ -12,14 +12,13 @@
                                     <h5 class="card-title text-primary">Welcome
                                         User! 🎉</h5>
                                     <p class="mb-4">
-                                        You have completed <span
-                                            class="fw-bold">{{ number_format(@$percentageCompleted, 2) }}%</span>
-                                        of your tasks today. Check your progress in your profile.
+                                        Welcome to the <span
+                                            class="fw-bold">Data Import Dashboard</span>
+
                                     </p>
 
-                                        <a href="{{ route('admin.dashboard') }}"
-                                            class="btn btn-sm btn-outline-primary">View
-                                            Tasks</a>
+                                        <a href="{{ route('uploadeDocument') }}"
+                                            class="btn btn-sm btn-outline-primary">Upload Document</a>
                                 </div>
                             </div>
                             <div class="col-sm-5 text-center text-sm-left">
@@ -44,8 +43,8 @@
                                                 alt="chart success" class="rounded" />
                                         </div>
                                     </div>
-                                    <span class="fw-semibold d-block mb-1">Completed Tasks</span>
-                                    <h3 class="card-title mb-2">{{ @$completedTasks }}</h3>
+                                    <span class="fw-semibold d-block mb-1">Paid Amount</span>
+                                    <h3 class="card-title mb-2 badge bg-label-success rounded-pill">11,461,021,901</h3>
                                 </div>
                             </div>
                         </div>
@@ -58,8 +57,8 @@
                                                 alt="Credit Card" class="rounded" />
                                         </div>
                                     </div>
-                                    <span>Pending Tasks</span>
-                                    <h3 class="card-title text-nowrap mb-1">{{ @$pendingTasks }}</h3>
+                                    <span>Concession</span>
+                                    <h3 class="card-title text-nowrap mb-1 badge bg-label-info rounded-pill">90,544,480</h3>
                                 </div>
                             </div>
                         </div>
@@ -132,8 +131,8 @@
                                                 alt="Credit Card" class="rounded" />
                                         </div>
                                     </div>
-                                    <span class="d-block mb-1">High Priority</span>
-                                    <h3 class="card-title text-nowrap mb-2">{{ @$highPriorityTasks }}</h3>
+                                    <span class="d-block mb-1">Due Amount</span>
+                                    <h3 class="card-title text-nowrap mb-2 badge bg-label-danger rounded-pill">12,654,422,921</h3>
                                 </div>
                             </div>
                         </div>
@@ -146,8 +145,8 @@
                                                 alt="Credit Card" class="rounded" />
                                         </div>
                                     </div>
-                                    <span class="fw-semibold d-block mb-1">Low Priority</span>
-                                    <h3 class="card-title mb-2">{{ @$lowPriorityTasks }}</h3>
+                                    <span class="fw-semibold d-block mb-1">Scholarship</span>
+                                    <h3 class="card-title mb-2 badge bg-label-primary rounded-pill">173,381,473</h3>
                                 </div>
                             </div>
                         </div>
@@ -159,12 +158,10 @@
                                         <div
                                             class="d-flex flex-sm-column flex-row align-items-start justify-content-between">
                                             <div class="card-title">
-                                                <h5 class="text-nowrap mb-2">Total Tasks</h5>
-                                                <span class="badge bg-label-warning rounded-pill">Year
-                                                    {{ now()->format('Y') }}</span>
+                                                <h5 class="text-nowrap mb-2">Refund</h5>
+                                                <span class="badge bg-label-warning rounded-pill">173,381,473</span>
                                             </div>
                                             <div class="mt-sm-auto">
-                                                <h3 class="mb-0">{{ @$totalTasks }}</h3>
                                             </div>
                                         </div>
                                         <div id="profileReportChart"></div>
